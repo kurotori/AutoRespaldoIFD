@@ -53,18 +53,7 @@ REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
 
 #----
-banner()
-{	
-	t_actual=$(date +%s)
-	fecha=$(date +%d-%m-%Y)
-	hora=$(date +%H-%M)
-	clear
-	printf "%1s\n" "${BRIGHT}----------------------------------------------${NORMAL}"
-	printf "%1s\n" "${LIME_YELLOW}    ${titulo} ${version}${NORMAL}"
-	printf "%1s\n" "${BRIGHT}-- $fecha ----------------------- $hora --${NORMAL}"
-	echo ""
-	
-}
+
 
 #----
 #parámetro 1: rango
