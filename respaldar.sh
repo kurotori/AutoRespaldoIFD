@@ -26,6 +26,7 @@ then
    while [ $opcion -ne 5 ]; do
         bash ./banner.sh
 
+        # Cambio de color de fondo tomado de: https://askubuntu.com/questions/558280/changing-colour-of-text-and-background-of-terminal
         printf "\e[48;5;255m;%1s\n" "    ${RED}ERROR: No se encontró la carpeta auxiliar.      ${NORMAL}"
         echo ""
         printf "%1s\n" "    ${BRIGHT}Elija una opción para continuar: ${NORMAL}"
