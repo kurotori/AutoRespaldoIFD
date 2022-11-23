@@ -18,15 +18,53 @@ BLINK=$(tput blink)
 REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
 
-bash ./banner.sh
-
+# Se chequea la existencia de la carpeta 'aux' conteniendo los datos de configuraci
 if [ -d ./aux ]
 then
-	printf "%1s\n" "${RED}ERROR: ${YELLOW}No se encontró la carpeta auxiliar.${NORMAL}"
-    echo ""
-    printf "%1s\n" "${BRIGHT}Elija una opción: ${NORMAL}"
-    printf "%1s\n" "${BRIGHT}1 - ${NORMAL} Reconfigurar el sistema de respaldos ${NORMAL}"
-    printf "%1s\n" "${BRIGHT}2 - ${NORMAL} Restaurar el sistema desde un respaldo ${NORMAL}"
+   opcion=0
+
+   while [ $opcion -ne 5 ]; do
+        bash ./banner.sh
+
+        printf "\e[48;5;255m;%1s\n" "    ${RED}ERROR: No se encontró la carpeta auxiliar.      ${NORMAL}"
+        echo ""
+        printf "%1s\n" "    ${BRIGHT}Elija una opción para continuar: ${NORMAL}"
+        echo ' '
+        printf "%1s\n" "        ${BRIGHT}1 - ${NORMAL} Reconfigurar el sistema de respaldos ${NORMAL}"
+        printf "%1s\n" "        ${BRIGHT}2 - ${NORMAL} Restaurar el sistema desde un respaldo ${NORMAL}"
+        printf "%1s\n" "        ${BRIGHT}X - ${NORMAL} Cancelar y Salir ${NORMAL}"
+
+        read -r opcion
+
+        case $opcion in
+            1)
+                echo "reconfigurar"
+                sleep 2s
+                opcion=5
+            ;;
+            2)
+                echo "restaurar"
+                sleep 2s
+                opcion=5
+            ;;
+            [xX])
+               echo ' '
+                opcion=5
+               
+            ;;
+            *)
+               echo ' '
+               
+                echo "ERROR. Opción no válida"
+                sleep 2s
+                opcion=0
+            ;;
+        esac
+   done
+   
+
+	
+   
 
 fi
 
