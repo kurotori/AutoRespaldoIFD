@@ -14,6 +14,7 @@ touch ./aux/ip_h.txt
 ### Variables Auxiliares
 titulo="Respaldo Remoto Automático"
 ubicacion=$(pwd)
+mac_disp=$(cat ./dispositivo.txt)
 config="$HOME/.respaldos"
 PC_ID=$(cat $config/aux/ID.txt)
 error_msg=""
@@ -74,7 +75,7 @@ do
     
     notify-send "$titulo" "Ubicando al servidor de respaldos en la red" -i "$ubicacion"/img/red_Freepik.png
     banner
-    mac_disp=$(cat ./dispositivo.txt)
+    
     echo "    Obteniendo los parámetros de la red..."
     echo "    Por favor espere..."
     ip_local=$(ip addr |sed -e 's/^[ \t]*//'| grep -e "inet[^6]"|grep -v 'vboxnet0'|cut -d" " -f2|grep -v '127.0.0.1')

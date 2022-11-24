@@ -18,7 +18,7 @@ BLINK=$(tput blink)
 REVERSE=$(tput smso)
 UNDERLINE=$(tput smul)
 
-# Se chequea la existencia de la carpeta 'aux' conteniendo los datos de configuraci
+# Se chequea la existencia de la carpeta 'aux' conteniendo los datos de configuración
 if [ -d ./aux ]
 then
    opcion=0
@@ -41,6 +41,7 @@ then
             1)
                 echo "reconfigurar"
                 sleep 2s
+                bash configurar.sh
                 opcion=5
             ;;
             2)
@@ -56,7 +57,7 @@ then
             *)
                echo ' '
                
-                echo "ERROR. Opción no válida"
+                printf "\e[48;5;255m;%1s\n" "    ${RED}ERROR: Opción no válida.      ${NORMAL}"
                 sleep 2s
                 opcion=0
             ;;
@@ -67,9 +68,4 @@ then
 	
    
 
-fi
-
-if [ -s ./aux/ID.txt ]
-then
-	mkdir ~/.respaldos/aux
 fi
