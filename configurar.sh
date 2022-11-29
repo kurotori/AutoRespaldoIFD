@@ -51,12 +51,56 @@ then
 fi
 echo "		... Listo"
 
-echo "3 - Registrando equipo con el servidor de respaldos"
-echo ""
+seleccion=0
+
+while [ "$seleccion" -eq 0 ]; do
+    bash banner.sh
+    echo "3 - Registrando equipo con el servidor de respaldos"
+    echo ""
+
+    echo "      Por favor indique la interfáz de red a usar:"
+
+    #Obteniendo y listando interfaces de red
+    interfaces=()
+    for dato in $(ip address | grep "^[0-9].*" | cut -d ":" -f 1,2)
+    do 
+        interfaces+=("$dato")
+    done
+
+    for i in "${!interfaces[@]}"
+    do
+        echo "$i - ${interfaces[$i]}"
+    done
+
+    read -r seleccion
+
+   case "${seleccion}" in
+    1)
+        echo "item = 1"
+    ;;
+    2|3)
+        echo "item = 2 or item = 3"
+    ;;
+    *)
+        echo "default (none of above)"
+    ;;
+   esac
+   
+
+    echo "${interfaces[$seleccion]}" > ./aux/interfaz.txt
+    echo "Se ha seleccionado la "
+
+done
+
+
+
+
+
+
 echo "		Por favor indique la dirección MAC del servidor:"
 echo "		(formato: xx:xx:xx:xx:xx:xx)"
 
-read mac_disp
+read -r mac_disp
 echo "$mac_disp" > ./aux/dispositivo.txt
 
 echo "		Ubicando al servidor ($mac_disp) en la red..."

@@ -24,6 +24,8 @@ buscar_h()
 	echo "$ip_h"
 }
 
+
+
 rango_red()
 {
     ip_local=$(ip addr |sed -e 's/^[ \t]*//'| grep -e "inet[^6]"|grep -v 'vboxnet0'|cut -d" " -f2|grep -v '127.0.0.1')
@@ -32,3 +34,22 @@ rango_red()
     ip_rango="$ip_parte1.0/$ip_parte2"
     echo "$ip_rango"
 }
+
+
+listar_interfaces()
+{
+    interfaces=()
+    for dato in $(ip address | grep "^[0-9].*" | cut -d ":" -f 2)
+    do 
+        interfaces+=("$dato") 
+    done
+
+    for i in "${!interfaces[@]}"
+    do
+        echo "$i - ${interfaces[$i]}"
+    done
+}
+
+listar_interfaces
+
+#echo "${coso[@]}"
