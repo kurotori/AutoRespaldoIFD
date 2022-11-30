@@ -3,7 +3,11 @@ clear
 
 source ./red.sh
 
-version=$(cat version.txt)
+### Variables Auxiliares
+#version=$(cat version.txt)
+error=0
+
+
 
 #### Funciones Auxiliares ####
 #---Formatos del texto
@@ -42,6 +46,7 @@ fi
 sleep 1
 echo "		... Listo"
 
+
 echo "2 - Generando ID Única del Sistema"
 if [ ! -a ./config/ID.txt ]
 then
@@ -49,12 +54,13 @@ then
     uuid=$(uuidgen)
     echo "$uuid" > ./config/ID.txt
 fi
+sleep 1
 echo "		... Listo"
-sleep 2
 
-seleccion=0
 
-while [ "$seleccion" -eq 0 ]; do
+seleccion=100
+
+while [ "$seleccion" -eq 100 ]; do
     bash banner.sh
     echo "3 - Registrando equipo con el servidor de respaldos"
     echo ""
@@ -80,25 +86,26 @@ while [ "$seleccion" -eq 0 ]; do
     read -r seleccion
     seleccion=$((seleccion-1))
 
-    case  1:${algo:--} in
+    case  1:${seleccion:--} in
         (1:*[!0-9]*|1:0*[89]*)
-        ! echo "${algo} no es un valor válido"; algo=0
+        ! echo "${seleccion} no es un valor válido"; seleccion=100
         ;;
-        ($((algo<=num))*)
-            item=${lista[$algo]}
-            echo "Seleccionó $item"
+        ($((seleccion<=num_interfaces))*)
+            item=${interfaces[$seleccion]}
+            #echo "Seleccionó $item"
             
         ;;
-        ($((algo>num))*)
-            echo "${algo} no es un valor válido"
+        ($((seleccion>num_interfaces))*)
+            echo "${seleccion} no es un valor válido"
+            seleccion=100
         ;;
     esac
-    sleep 2
+    #sleep 2
 
    
 
     echo "${interfaces[$seleccion]}" > ./config/interfaz.txt
-    echo "Se ha seleccionado la "
+    echo "Se ha seleccionado la interfáz: ${interfaces[$seleccion]}"
 
 done
 
