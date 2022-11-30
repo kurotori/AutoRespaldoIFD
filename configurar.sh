@@ -34,22 +34,23 @@ printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMA
 
 echo "1 - Creando carpetas auxiliares"
 
-if [ ! -d ./aux ]
+if [ ! -d ./config ]
 then
-	mkdir ./aux
+	mkdir ./config
 fi
 
 sleep 1
 echo "		... Listo"
 
 echo "2 - Generando ID Única del Sistema"
-if [ ! -a ./aux/ID.txt ]
+if [ ! -a ./config/ID.txt ]
 then
-    touch ./aux/ID.txt
+    touch ./config/ID.txt
     uuid=$(uuidgen)
-    echo "$uuid" > ./aux/ID.txt
+    echo "$uuid" > ./config/ID.txt
 fi
 echo "		... Listo"
+sleep 2
 
 seleccion=0
 
@@ -60,34 +61,43 @@ while [ "$seleccion" -eq 0 ]; do
 
     echo "      Por favor indique la interfáz de red a usar:"
 
-    #Obteniendo y listando interfaces de red
+    #Obteniendo interfaces de red
     interfaces=()
-    for dato in $(ip address | grep "^[0-9].*" | cut -d ":" -f 1,2)
+    for dato in $(ip address | grep "^[0-9].*" | cut -d ":" -f 2)
     do 
         interfaces+=("$dato")
     done
 
+    #Listando interfaces de red
     for i in "${!interfaces[@]}"
     do
-        echo "$i - ${interfaces[$i]}"
+        num=$((i+1))
+        echo "$num - ${interfaces[$i]}"
     done
 
-    read -r seleccion
+    num_interfaces=${#interfaces[@]}
 
-   case "${seleccion}" in
-    1)
-        echo "item = 1"
-    ;;
-    2|3)
-        echo "item = 2 or item = 3"
-    ;;
-    *)
-        echo "default (none of above)"
-    ;;
-   esac
+    read -r seleccion
+    seleccion=$((seleccion-1))
+
+    case  1:${algo:--} in
+        (1:*[!0-9]*|1:0*[89]*)
+        ! echo "${algo} no es un valor válido"; algo=0
+        ;;
+        ($((algo<=num))*)
+            item=${lista[$algo]}
+            echo "Seleccionó $item"
+            
+        ;;
+        ($((algo>num))*)
+            echo "${algo} no es un valor válido"
+        ;;
+    esac
+    sleep 2
+
    
 
-    echo "${interfaces[$seleccion]}" > ./aux/interfaz.txt
+    echo "${interfaces[$seleccion]}" > ./config/interfaz.txt
     echo "Se ha seleccionado la "
 
 done
@@ -101,7 +111,7 @@ echo "		Por favor indique la dirección MAC del servidor:"
 echo "		(formato: xx:xx:xx:xx:xx:xx)"
 
 read -r mac_disp
-echo "$mac_disp" > ./aux/dispositivo.txt
+echo "$mac_disp" > ./config/dispositivo.txt
 
 echo "		Ubicando al servidor ($mac_disp) en la red..."
 echo "		Obteniendo parámetros de la red..."

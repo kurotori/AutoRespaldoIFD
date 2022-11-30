@@ -1,10 +1,54 @@
 #!/bin/bash
+algo=0
 
-source ./red.sh
+while [ "${algo}" -ne 100 ]; do
+    clear
+    echo 'Ingrese un número'
 
-rango=$(rango_red)
-coso=$(buscar_h "$rango" "00:25:22:db:0d:d2")
-echo "$coso"
+    read -r algo
+
+    algo=$((algo-1))
+
+    lista=("coso" "cosa" "cose")
+    num=${#lista[@]}
+
+
+    case  1:${algo:--} in
+    (1:*[!0-9]*|1:0*[89]*)
+    ! echo "${algo} no es un valor válido"; algo=0
+    ;;
+    ($((algo<=num))*)
+        item=${lista[$algo]}
+        echo "Seleccionó $item"
+        
+    ;;
+    ($((algo>num))*)
+        echo "${algo} no es un valor válido"
+    ;;
+    *)
+       echo "${algo} no es un valor válido"
+       algo=0
+    ;;
+    esac
+sleep 2
+done
+
+
+
+
+
+
+
+
+
+
+
+# source ./red.sh
+
+# rango=$(rango_red)
+# coso=$(buscar_h "$rango" "00:25:22:db:0d:d2")
+# echo "$coso"
+
 
 
 
