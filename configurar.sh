@@ -6,7 +6,7 @@ source ./red.sh
 ### Variables Auxiliares
 #version=$(cat version.txt)
 error=0
-
+interf_red=""
 
 
 #### Funciones Auxiliares ####
@@ -88,7 +88,7 @@ while [ "$seleccion" -eq 100 ]; do
 
     case  1:${seleccion:--} in
         (1:*[!0-9]*|1:0*[89]*)
-        ! echo "${seleccion} no es un valor válido"; seleccion=100
+        ! echo "      ${seleccion} no es un valor válido"; seleccion=100
         ;;
         ($((seleccion<=num_interfaces))*)
             item=${interfaces[$seleccion]}
@@ -96,7 +96,7 @@ while [ "$seleccion" -eq 100 ]; do
             
         ;;
         ($((seleccion>num_interfaces))*)
-            echo "${seleccion} no es un valor válido"
+            echo "      ${seleccion} no es un valor válido"
             seleccion=100
         ;;
     esac
@@ -105,28 +105,44 @@ while [ "$seleccion" -eq 100 ]; do
    
 
     echo "${interfaces[$seleccion]}" > ./config/interfaz.txt
-    echo "Se ha seleccionado la interfáz: ${interfaces[$seleccion]}"
+    interf_red=${interfaces[$seleccion]}
+    echo "      Se ha seleccionado la interfáz: ${interfaces[$seleccion]}"
+    
+
 
 done
 
+#rango=$(ip a show ${interfaces[$seleccion]})
+#echo "dato red: ${dato}"
 
 
-
-
-
-echo "		Por favor indique la dirección MAC del servidor:"
+echo "		Por favor indique la dirección MAC del servidor de respaldos:"
 echo "		(formato: xx:xx:xx:xx:xx:xx)"
 
 read -r mac_disp
 echo "$mac_disp" > ./config/dispositivo.txt
 
 echo "		Ubicando al servidor ($mac_disp) en la red..."
-echo "		Obteniendo parámetros de la red..."
-rango=$(rango_red)
+echo "		Obteniendo parámetros de la red con la interfáz $interf_red..."
+rango=$(rango_red $interf_red)
+#echo "${rango}"
+
 
 echo "		...Listo. Rango de red: $rango"
-echo "		Escaneando la red. Por favor espere..."
-ip_servidor=$(buscar_h "$rango" "$mac_disp")
+echo "		Escaneando la red en busca del servidor. Por favor espere..."
+ip_servidor=$(buscar_h "$rango" "$mac_disp") & PID=$! #simulate a long process
+echo "    Por favor espere..."
+printf "["
+# While process is running...
+while kill -0 $PID 2> /dev/null; do 
+    printf  "▓"
+    sleep 1
+done
+printf "]"
+
+echo "    Búsqueda Completa"
+#Código de animación de espera tomado del usuario cosbor11 de stackoverflow.com
+#Obtenido de https://stackoverflow.com/questions/12498304/using-bash-to-display-a-progress-indicator
 
 echo "		...Listo. IP del servidor: $ip_servidor"
 

@@ -25,10 +25,12 @@ buscar_h()
 }
 
 
-
+#Determina el rango de la red local
+#Parámetro 1: interfáz de red
 rango_red()
 {
-    ip_local=$(ip addr |sed -e 's/^[ \t]*//'| grep -e "inet[^6]"|grep -v 'vboxnet0'|cut -d" " -f2|grep -v '127.0.0.1')
+    #ip_local=$(ip addr |sed -e 's/^[ \t]*//'| grep -e "inet[^6]"|grep -v 'vboxnet0'|cut -d" " -f2|grep -v '127.0.0.1')
+    ip_local=$(ip a list $1|sed -e 's/^[ \t]*//'|grep -e "inet[^6]"|cut -d" " -f2)
     ip_parte1=$(echo "$ip_local"|cut -d"." -f1,2,3)
     ip_parte2=$(echo "$ip_local"|cut -d"/" -f2)
     ip_rango="$ip_parte1.0/$ip_parte2"
