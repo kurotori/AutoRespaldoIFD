@@ -130,7 +130,7 @@ rango=$(rango_red $interf_red)
 
 echo "		...Listo. Rango de red: $rango"
 echo "		Escaneando la red en busca del servidor. Por favor espere..."
-ip_servidor=$(buscar_h "$rango" "$mac_disp") & PID=$! #simulate a long process
+buscar_h "$rango" "$mac_disp" & PID=$! #simulate a long process
 echo "    Por favor espere..."
 printf "["
 # While process is running...
@@ -140,17 +140,19 @@ while kill -0 $PID 2> /dev/null; do
 done
 printf "]"
 
-echo "    Búsqueda Completa"
+echo "    Escaneo Completo"
 #Código de animación de espera tomado del usuario cosbor11 de stackoverflow.com
 #Obtenido de https://stackoverflow.com/questions/12498304/using-bash-to-display-a-progress-indicator
 
+
+ip_servidor=$(cat ./config/ip_servidor.txt)
 echo "		...Listo. IP del servidor: $ip_servidor"
 
 echo "		Accediendo a la carpeta de respaldos del servidor"
 
-if [ ! -d /media/"$USER"/servidor ]
+if [ ! -d /media/"$USER"/servidorR ]
 then
-	sudo mkdir /media/"$USER"/servidor
+	sudo mkdir /media/"$USER"/servidorR> /dev/null
 fi
 sudo 
 

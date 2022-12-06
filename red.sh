@@ -5,7 +5,7 @@
 mapeo()
 {
     ip_l=$(nmap -sP $1 >/dev/null && arp -an)
-    echo "$ip_l">./aux/lista_ips.txt
+    echo "$ip_l">./config/lista_ips.txt
 }
 
 
@@ -13,15 +13,15 @@ mapeo()
 buscar_h()
 {
     mapeo "$1"
-    ip_h2=$(grep -c "$2" ./aux/lista_ips.txt)
+    ip_h2=$(grep -c "$2" ./config/lista_ips.txt)
     #echo "cant $ip_h2"
 
     if [ $ip_h2 -eq 1 ]
     then
-        ip_h=$(grep "$2" ./aux/lista_ips.txt|awk '{print $2}'|sed 's/[()]//g')
+        ip_h=$(grep "$2" ./config/lista_ips.txt|awk '{print $2}'|sed 's/[()]//g')
     fi
 
-	echo "$ip_h"
+	echo "$ip_h">./config/ip_servidor.txt
 }
 
 
