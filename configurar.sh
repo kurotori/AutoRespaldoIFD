@@ -31,12 +31,17 @@ UNDERLINE=$(tput smul)
 
 
 #----
+bash banner.sh
+printf "%1s\n" "${LIME_YELLOW}            Chequeando software necesario${NORMAL}"
+printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMAL}"
+echo ""
+echo "  1 - "
 
 bash banner.sh
 printf "%1s\n" "${LIME_YELLOW}            Configurando el sistema ${NORMAL}"
 printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMAL}"
-
-echo "1 - Creando carpetas auxiliares"
+echo ""
+echo "  1 - Creando carpetas auxiliares"
 
 if [ ! -d ./config ]
 then
@@ -45,9 +50,8 @@ fi
 
 sleep 1
 echo "		... Listo"
-
-
-echo "2 - Generando ID Única del Sistema"
+echo ""
+echo "  2 - Generando ID Única del Sistema"
 if [ ! -a ./config/ID.txt ]
 then
     touch ./config/ID.txt
@@ -56,13 +60,13 @@ then
 fi
 sleep 1
 echo "		... Listo"
-
+sleep 1
 
 seleccion=100
 
 while [ "$seleccion" -eq 100 ]; do
     bash banner.sh
-    echo "3 - Registrando equipo con el servidor de respaldos"
+    echo "  3 - Registrando equipo con el servidor de respaldos"
     echo ""
 
     echo "      Por favor indique la interfáz de red a usar:"
@@ -78,11 +82,12 @@ while [ "$seleccion" -eq 100 ]; do
     for i in "${!interfaces[@]}"
     do
         num=$((i+1))
-        echo "$num - ${interfaces[$i]}"
+        echo "            $num - ${interfaces[$i]}"
     done
 
     num_interfaces=${#interfaces[@]}
 
+    echo ""
     read -r seleccion
     seleccion=$((seleccion-1))
 
@@ -106,33 +111,39 @@ while [ "$seleccion" -eq 100 ]; do
 
     echo "${interfaces[$seleccion]}" > ./config/interfaz.txt
     interf_red=${interfaces[$seleccion]}
-    echo "      Se ha seleccionado la interfáz: ${interfaces[$seleccion]}"
+
+    #printf "%1s\n" "      Se ha seleccionado la interfáz:  ${BRIGHT}${interfaces[$seleccion]}${NORMAL}"
     
-
-
 done
 
+bash banner.sh
+printf "%1s\n" "      Se ha seleccionado la interfáz:  ${BRIGHT}${interf_red}${NORMAL}"
+
+sleep 2
 #rango=$(ip a show ${interfaces[$seleccion]})
 #echo "dato red: ${dato}"
+echo ""
+echo "      Obteniendo parámetros de la red con la interfáz seleccionada..."
+rango=$(rango_red $interf_red)
+echo "      ...Listo."
+echo ""
 
+printf "%1s\n" "      Rango de red:  ${BRIGHT}${rango}${NORMAL}"
 
-echo "		Por favor indique la dirección MAC del servidor de respaldos:"
-echo "		(formato: xx:xx:xx:xx:xx:xx)"
+echo ""
+echo "      Por favor indique la dirección MAC del servidor de respaldos:"
+echo "      (formato: xx:xx:xx:xx:xx:xx)"
+echo ""
 
 read -r mac_disp
 echo "$mac_disp" > ./config/dispositivo.txt
 
-echo "		Ubicando al servidor ($mac_disp) en la red..."
-echo "		Obteniendo parámetros de la red con la interfáz $interf_red..."
-rango=$(rango_red $interf_red)
-#echo "${rango}"
+echo "      Ubicando al servidor ($mac_disp) en la red..."
 
-
-echo "		...Listo. Rango de red: $rango"
-echo "		Escaneando la red en busca del servidor. Por favor espere..."
+echo "      Escaneando la red en busca del servidor."
 buscar_h "$rango" "$mac_disp" & PID=$! #simulate a long process
-echo "    Por favor espere..."
-printf "["
+echo "      Por favor espere..."
+printf "      ["
 # While process is running...
 while kill -0 $PID 2> /dev/null; do 
     printf  "▓"
@@ -140,21 +151,21 @@ while kill -0 $PID 2> /dev/null; do
 done
 printf "]"
 
-echo "    Escaneo Completo"
+echo "    ...Escaneo Completo"
 #Código de animación de espera tomado del usuario cosbor11 de stackoverflow.com
 #Obtenido de https://stackoverflow.com/questions/12498304/using-bash-to-display-a-progress-indicator
 
 
 ip_servidor=$(cat ./config/ip_servidor.txt)
-echo "		...Listo. IP del servidor: $ip_servidor"
-
+echo "      ...Listo.   IP del servidor: $ip_servidor"
+echo ""
 echo "		Accediendo a la carpeta de respaldos del servidor"
 
 if [ ! -d /media/"$USER"/servidorR ]
 then
 	sudo mkdir /media/"$USER"/servidorR> /dev/null
 fi
-sudo 
+#sudo 
 
 sleep 1
 echo "... Listo"
