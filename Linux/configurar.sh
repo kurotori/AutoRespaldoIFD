@@ -187,6 +187,7 @@ echo "      ... Listo"
 
 echo ""
 echo "      Registrando PC en el servidor..."
+# --> Revisar este artículo: https://askubuntu.com/questions/1021643/how-to-specify-a-password-when-mounting-a-smb-share-with-gio
 
 sudo mkdir /media/"$USER"/servidorR/"${id}"
 sleep 1
