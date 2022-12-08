@@ -31,11 +31,19 @@ UNDERLINE=$(tput smul)
 
 
 #----
-bash banner.sh
-printf "%1s\n" "${LIME_YELLOW}            Chequeando software necesario${NORMAL}"
-printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMAL}"
-echo ""
-echo "  1 - "
+paquetes=("nmap" "cifs-utils" "rsync")
+for i in "${!paquetes[@]}"
+do
+    bash banner.sh
+    printf "%1s\n" "${LIME_YELLOW}            Chequeando software necesario${NORMAL}"
+    printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMAL}"
+    echo ""
+    num=$((i+1))
+    printf "%1s\n" "      $num - ${BRIGHT}${paquetes[$i]}${NORMAL}"
+    echo ""
+    sudo apt install "${paquetes[$i]}"
+    sleep 1
+done
 
 bash banner.sh
 printf "%1s\n" "${LIME_YELLOW}            Configurando el sistema ${NORMAL}"
@@ -49,7 +57,7 @@ then
 fi
 
 sleep 1
-echo "		... Listo"
+echo "      ... Listo"
 echo ""
 echo "  2 - Generando ID Única del Sistema"
 if [ ! -a ./config/ID.txt ]
@@ -59,7 +67,7 @@ then
     echo "$uuid" > ./config/ID.txt
 fi
 sleep 1
-echo "		... Listo"
+echo "      ... Listo"
 sleep 1
 
 seleccion=100
@@ -119,17 +127,18 @@ done
 bash banner.sh
 printf "%1s\n" "      Se ha seleccionado la interfáz:  ${BRIGHT}${interf_red}${NORMAL}"
 
-sleep 2
 #rango=$(ip a show ${interfaces[$seleccion]})
 #echo "dato red: ${dato}"
 echo ""
 echo "      Obteniendo parámetros de la red con la interfáz seleccionada..."
 rango=$(rango_red $interf_red)
+sleep 2
 echo "      ...Listo."
 echo ""
 
 printf "%1s\n" "      Rango de red:  ${BRIGHT}${rango}${NORMAL}"
 
+sleep 2
 echo ""
 echo "      Por favor indique la dirección MAC del servidor de respaldos:"
 echo "      (formato: xx:xx:xx:xx:xx:xx)"
@@ -137,9 +146,10 @@ echo ""
 
 read -r mac_disp
 echo "$mac_disp" > ./config/dispositivo.txt
+echo ""
 
-echo "      Ubicando al servidor ($mac_disp) en la red..."
-
+printf "%1s\n" "      Ubicando al servidor  ${BRIGHT}${mac_disp}${NORMAL} en la red..."
+echo ""
 echo "      Escaneando la red en busca del servidor."
 buscar_h "$rango" "$mac_disp" & PID=$! #simulate a long process
 echo "      Por favor espere..."
@@ -154,21 +164,35 @@ printf "]"
 echo "    ...Escaneo Completo"
 #Código de animación de espera tomado del usuario cosbor11 de stackoverflow.com
 #Obtenido de https://stackoverflow.com/questions/12498304/using-bash-to-display-a-progress-indicator
+sleep 2
 
-
+bash banner.sh
 ip_servidor=$(cat ./config/ip_servidor.txt)
-echo "      ...Listo.   IP del servidor: $ip_servidor"
 echo ""
-echo "		Accediendo a la carpeta de respaldos del servidor"
+printf "%1s\n" "      IP del servidor:  ${BRIGHT}${ip_servidor}${NORMAL}"
+
+echo ""
+echo "      Accediendo a la carpeta de respaldos del servidor..."
 
 if [ ! -d /media/"$USER"/servidorR ]
 then
 	sudo mkdir /media/"$USER"/servidorR> /dev/null
 fi
-#sudo 
+sudo chown "$USER" /media/"$USER"/servidorR
 
+id=$(cat ./config/ID.txt)
+sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$USER"/servidorR
 sleep 1
-echo "... Listo"
+echo "      ... Listo"
+
+echo ""
+echo "      Registrando PC en el servidor..."
+
+sudo mkdir /media/"$USER"/servidorR/"${id}"
+sleep 1
+echo "      ... Listo"
+
+
 
 
 
