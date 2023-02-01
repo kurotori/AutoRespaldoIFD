@@ -1,0 +1,8 @@
+</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 5.9766393,38.550365 H 204.02336"
+       id="path11"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>

@@ -1,6 +1,7 @@
 #!/bin/bash
 clear
 
+# shellcheck source=red.sh
 source ./red.sh
 
 ### Variables Auxiliares
@@ -31,7 +32,7 @@ UNDERLINE=$(tput smul)
 
 
 #----
-paquetes=("nmap" "cifs-utils" "rsync")
+paquetes=("nmap" "cifs-utils" "rsync" "imagemagick")
 for i in "${!paquetes[@]}"
 do
     bash banner.sh
@@ -180,7 +181,10 @@ then
 fi
 sudo chown "$USER" /media/"$USER"/servidorR
 
+#echo "fin de crear carpeta de montaje"
+
 id=$(cat ./config/ID.txt)
+#echo "usuario actual: $USER"
 sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$USER"/servidorR
 sleep 1
 echo "      ... Listo"
@@ -190,8 +194,21 @@ echo "      Registrando PC en el servidor..."
 # --> Revisar este artículo: https://askubuntu.com/questions/1021643/how-to-specify-a-password-when-mounting-a-smb-share-with-gio
 
 sudo mkdir /media/"$USER"/servidorR/"${id}"
+# Desmontado de unidad remota
+sudo umount //"${ip_servidor}"/respaldos
+
 sleep 1
 echo "      ... Listo"
+
+# Creación de ID imprimible
+touch ID.svg
+cat encabezado_ID.txt > ID.svg
+echo "${id}" >> ID.svg
+cat final_ID.txt >> ID.svg
+mogrify -format pdf -- ID.svg
+echo "      ID imprimible creada"
+
+
 
 
 

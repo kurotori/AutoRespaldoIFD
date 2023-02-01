@@ -31,7 +31,7 @@ then
         echo ""
         printf "%1s\n" "    ${BRIGHT}Elija una opción para continuar: ${NORMAL}"
         echo ' '
-        printf "%1s\n" "        ${BRIGHT}1 - ${NORMAL} Reconfigurar el sistema de respaldos ${NORMAL}"
+        printf "%1s\n" "        ${BRIGHT}1 - ${NORMAL} Configurar o Reconfigurar el sistema de respaldos ${NORMAL}"
         printf "%1s\n" "        ${BRIGHT}2 - ${NORMAL} Restaurar el sistema desde un respaldo ${NORMAL}"
         printf "%1s\n" "        ${BRIGHT}X - ${NORMAL} Cancelar y Salir ${NORMAL}"
 
