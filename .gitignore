@@ -3,3 +3,5 @@ Linux/config/
 Linux/datos/
 Windows/nmap/
 Windows/referencias/
+*.svg
+*.pdf

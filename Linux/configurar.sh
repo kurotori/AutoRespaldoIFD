@@ -32,7 +32,7 @@ UNDERLINE=$(tput smul)
 
 
 #----
-paquetes=("nmap" "cifs-utils" "rsync" "imagemagick")
+paquetes=("nmap" "cifs-utils" "rsync" "cairosvg")
 for i in "${!paquetes[@]}"
 do
     bash banner.sh
@@ -42,10 +42,15 @@ do
     num=$((i+1))
     printf "%1s\n" "      $num - ${BRIGHT}${paquetes[$i]}${NORMAL}"
     echo ""
-    sudo apt install "${paquetes[$i]}"
+    sudo apt -y install "${paquetes[$i]}"
     sleep 1
 done
 
+    #echo "  Cambiando permisos de ImageMagick..."
+
+    #sudo sed -i 's/<!-- <policy domain="coder" rights="none" pattern="PDF" --> \/>/<policy domain="coder" rights="none" pattern="PDF" \/>/' /etc/ImageMagick-6/policy.xml
+    #echo "  Listo"
+    #sleep 2
 bash banner.sh
 printf "%1s\n" "${LIME_YELLOW}            Configurando el sistema ${NORMAL}"
 printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMAL}"
@@ -205,8 +210,12 @@ touch ID.svg
 cat encabezado_ID.txt > ID.svg
 echo "${id}" >> ID.svg
 cat final_ID.txt >> ID.svg
-mogrify -format pdf -- ID.svg
+#mogrify -format png -- ID.svg
+cairosvg -f pdf -o ID.pdf ID.svg
 echo "      ID imprimible creada"
+printf "%1s\n" "${RED}            Imprima el documento que aparecerá en pantalla. ${NORMAL}"
+printf "%1s\n" "${RED}            Esa es la ID que identifica al ${NORMAL}"
+
 
 
 
