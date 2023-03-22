@@ -21,7 +21,7 @@ buscar_h()
         ip_h=$(grep "$2" ./config/lista_ips.txt|awk '{print $2}'|sed 's/[()]//g')
     fi
 
-	echo "$ip_h">./config/ip_servidor.txt
+	echo "$ip_h">~/.respConfig/ip_servidor.txt
 }
 
 

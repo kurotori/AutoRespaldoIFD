@@ -57,20 +57,21 @@ printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMA
 echo ""
 echo "  1 - Creando carpetas auxiliares"
 
-if [ ! -d ./config ]
+if [ ! -d ~/.respConfig ]
 then
-	mkdir ./config
+	mkdir ~/.respConfig
 fi
 
 sleep 1
 echo "      ... Listo"
 echo ""
 echo "  2 - Generando ID Única del Sistema"
-if [ ! -a ./config/ID.txt ]
+if [ ! -a ~/.respConfig/ID.txt ]
 then
-    touch ./config/ID.txt
+    touch ~/.respConfig/ID.txt
     uuid=$(uuidgen)
-    echo "$uuid" > ./config/ID.txt
+    uuid=${uuid^^}
+    echo "$uuid" > ~/.respConfig/ID.txt
 fi
 sleep 1
 echo "      ... Listo"
@@ -123,7 +124,7 @@ while [ "$seleccion" -eq 100 ]; do
 
    
 
-    echo "${interfaces[$seleccion]}" > ./config/interfaz.txt
+    echo "${interfaces[$seleccion]}" > ~/.respConfig/interfaz.txt
     interf_red=${interfaces[$seleccion]}
 
     #printf "%1s\n" "      Se ha seleccionado la interfáz:  ${BRIGHT}${interfaces[$seleccion]}${NORMAL}"
@@ -137,7 +138,7 @@ printf "%1s\n" "      Se ha seleccionado la interfáz:  ${BRIGHT}${interf_red}${
 #echo "dato red: ${dato}"
 echo ""
 echo "      Obteniendo parámetros de la red con la interfáz seleccionada..."
-rango=$(rango_red $interf_red)
+rango=$(rango_red "$interf_red")
 sleep 2
 echo "      ...Listo."
 echo ""
@@ -146,12 +147,13 @@ printf "%1s\n" "      Rango de red:  ${BRIGHT}${rango}${NORMAL}"
 
 sleep 2
 echo ""
-echo "      Por favor indique la dirección MAC del servidor de respaldos:"
+printf "%1s\n" "     ${YELLOW}Por favor indique la dirección MAC del servidor de respaldos:${NORMAL}"
+# echo "      Por favor indique la dirección MAC del servidor de respaldos:"
 echo "      (formato: xx:xx:xx:xx:xx:xx)"
 echo ""
 
 read -r mac_disp
-echo "$mac_disp" > ./config/dispositivo.txt
+echo "$mac_disp" > ~/.respConfig/dispositivo.txt
 echo ""
 
 printf "%1s\n" "      Ubicando al servidor  ${BRIGHT}${mac_disp}${NORMAL} en la red..."
@@ -173,7 +175,7 @@ echo "    ...Escaneo Completo"
 sleep 2
 
 bash banner.sh
-ip_servidor=$(cat ./config/ip_servidor.txt)
+ip_servidor=$(cat ~/.respConfig/ip_servidor.txt)
 echo ""
 printf "%1s\n" "      IP del servidor:  ${BRIGHT}${ip_servidor}${NORMAL}"
 
@@ -188,7 +190,7 @@ sudo chown "$USER" /media/"$USER"/servidorR
 
 #echo "fin de crear carpeta de montaje"
 
-id=$(cat ./config/ID.txt)
+id=$(cat ~/.respConfig/ID.txt)
 #echo "usuario actual: $USER"
 sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$USER"/servidorR
 sleep 1
@@ -206,15 +208,28 @@ sleep 1
 echo "      ... Listo"
 
 # Creación de ID imprimible
-touch ID.svg
-cat encabezado_ID.txt > ID.svg
-echo "${id}" >> ID.svg
-cat final_ID.txt >> ID.svg
+touch ~/.respConfig/ID.svg
+cat encabezado_ID.txt > ~/.respConfig/ID.svg
+echo "${id}" >> ~/.respConfig/ID.svg
+cat final_ID.txt >> ~/.respConfig/ID.svg
 #mogrify -format png -- ID.svg
-cairosvg -f pdf -o ID.pdf ID.svg
+cairosvg -f pdf -o ~/.respConfig/ID.pdf ~/.respConfig/ID.svg
+
+bash banner.sh
 echo "      ID imprimible creada"
+printf "%1s\n" "${RED}            ATENCION:${NORMAL}"
 printf "%1s\n" "${RED}            Imprima el documento que aparecerá en pantalla. ${NORMAL}"
-printf "%1s\n" "${RED}            Esa es la ID que identifica al ${NORMAL}"
+printf "%1s\n" "${RED}            Esa es la ID que permitirá restaurar el Sistema. ${NORMAL}"
+printf "%1s\n" "${YELLOW}            Presione ENTER para continuar. ${NORMAL}"
+read ok
+xdg-open ~/.respConfig/ID.pdf
+
+bash banner.sh
+printf "%1s\n" "${YELLOW}            Creando subrutina de respaldo${NORMAL}"
+crontab -l > 
+
+
+
 
 
 
