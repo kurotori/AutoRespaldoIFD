@@ -15,14 +15,85 @@
 #include <GUIConstants.au3>
 #include <AutoItConstants.au3>
 
+#include <EditConstants.au3>
+#include <GUIConstantsEx.au3>
+#include <GuiStatusBar.au3>
+#include <WindowsConstants.au3>
+
+#Region ### START Koda GUI section ### Form=E:\MEGA\GitHub\buscarMV\Windows\Ventana1.kxf
+$Form1 = GUICreate("AutoRespaldo", 641, 481, 192, 124)
+GUISetBkColor(0xFFFFFF)
+$StatusBar1 = _GUICtrlStatusBar_Create($Form1)
+_GUICtrlStatusBar_SetMinHeight($StatusBar1, 25)
+$Edit1 = GUICtrlCreateEdit("", 16, 16, 601, 377)
+GUICtrlSetData(-1, "")
+$BtnIniciar = GUICtrlCreateButton("Iniciar", 16, 400, 89, 33)
+GUISetState(@SW_SHOW)
+#EndRegion ### END Koda GUI section ###
+
+While 1
+
+	
+
+	$nMsg = GUIGetMsg()
+	Switch $nMsg
+		Case $BtnIniciar
+			Local $IdUnica = GenerarID()
+			AgregarDatosAControl($Edit1, $IdUnica)
+
+			;; Consulta a WMI.
+			;; Fuentes: https://www.autoitscript.com/forum/files/file/396-network-adapters-info/
+			;; 			https://learn.microsoft.com/en-us/windows/win32/wmisdk/wmi-tasks--networking
+			
+			Local $sComputer = "."
+			Local $objWMI = ObjGet("winmgmts:\\" & $sComputer & "\root\cimv2")
+			Local $objWQLx = $objWMI.ExecQuery("SELECT * FROM Win32_NetworkAdapter WHERE NetConnectionID != NULL", "WQL", 0x30)
+			For $objVARx In $objWQLx
+				;ConsoleWrite($objVARx.NetConnectionID & @CRLF)
+				$datosConn=$objVARx.NetConnectionID & "-" & $objVARx.MACAddress
+
+				#cs
+ 				For $IPadd In $objVARx.IPAddress
+					ConsoleWrite($IPadd)
+				Next 
+				#ce
+
+				AgregarDatosAControl($Edit1, $datosConn)
+			Next
+			Local $objWQLx2 = $objWMI.ExecQuery("SELECT * FROM Win32_NetworkAdapterConfiguration")
+
+
+			For $DatosIP In $objWQLx2
+				$NumIps = UBound($DatosIP.IPAddress)
+
+				If ($NumIps > 0) Then
+					ConsoleWrite($DatosIP.Description & @CRLF)
+					ConsoleWrite(" - IPs:"& UBound($DatosIP.IPAddress) & @CRLF)
+					For $Ip In $DatosIP.IPAddress
+						ConsoleWrite(@TAB & $Ip & @CRLF)
+					Next
+				EndIf				
+				
+				
+				
+			Next
+
+
+		Case $GUI_EVENT_CLOSE
+			Exit
+
+	EndSwitch
+WEnd
+
+
 ;MsgBox($MB_ICONINFORMATION,"info","Probando")
 
-Local $p = GenerarID()
-ConsoleWrite($p)
+;Local $p = GenerarID()
+;ConsoleWrite($p)
 
 ;Local $arp = RunWait(@ComSpec & " /c " & "arp -a",@SW_HIDE, $STDOUT_CHILD)
-Local $arp = _getDOSOutput('ipconfig') & @CRLF 
-ConsoleWrite($arp)
+;Local $arp = _getDOSOutput('ipconfig') & @CRLF 
+;ConsoleWrite($arp)
 
 #cs 
 	Permite detectar y escanear los dispositivos de la red local. 
@@ -81,4 +152,8 @@ Func _getDOSOutput($command)
         Sleep(10)
     WEnd
     Return $text
-EndFunc 
+EndFunc
+
+Func AgregarDatosAControl($Control, $datos)
+	GUICtrlSetData($Control, GUICtrlRead($Control) & @CRLF & $datos)
+EndFunc
