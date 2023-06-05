@@ -57,21 +57,21 @@ printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMA
 echo ""
 echo "  1 - Creando carpetas auxiliares"
 
-if [ ! -d ~/.respConfig ]
+if [ ! -d config ]
 then
-	mkdir ~/.respConfig
+	mkdir config
 fi
 
 sleep 1
 echo "      ... Listo"
 echo ""
 echo "  2 - Generando ID Única del Sistema"
-if [ ! -a ~/.respConfig/ID.txt ]
+if [ ! -a config/ID.txt ]
 then
-    touch ~/.respConfig/ID.txt
+    touch config/ID.txt
     uuid=$(uuidgen)
     uuid=${uuid^^}
-    echo "$uuid" > ~/.respConfig/ID.txt
+    echo "$uuid" > config/ID.txt
 fi
 sleep 1
 echo "      ... Listo"
@@ -124,7 +124,7 @@ while [ "$seleccion" -eq 100 ]; do
 
    
 
-    echo "${interfaces[$seleccion]}" > ~/.respConfig/interfaz.txt
+    echo "${interfaces[$seleccion]}" > config/interfaz.txt
     interf_red=${interfaces[$seleccion]}
 
     #printf "%1s\n" "      Se ha seleccionado la interfáz:  ${BRIGHT}${interfaces[$seleccion]}${NORMAL}"
@@ -153,7 +153,7 @@ echo "      (formato: xx:xx:xx:xx:xx:xx)"
 echo ""
 
 read -r mac_disp
-echo "$mac_disp" > ~/.respConfig/dispositivo.txt
+echo "$mac_disp" > config/dispositivo.txt
 echo ""
 
 printf "%1s\n" "      Ubicando al servidor  ${BRIGHT}${mac_disp}${NORMAL} en la red..."
@@ -175,7 +175,7 @@ echo "    ...Escaneo Completo"
 sleep 2
 
 bash banner.sh
-ip_servidor=$(cat ~/.respConfig/ip_servidor.txt)
+ip_servidor=$(cat config/ip_servidor.txt)
 echo ""
 printf "%1s\n" "      IP del servidor:  ${BRIGHT}${ip_servidor}${NORMAL}"
 
@@ -190,7 +190,7 @@ sudo chown "$USER" /media/"$USER"/servidorR
 
 #echo "fin de crear carpeta de montaje"
 
-id=$(cat ~/.respConfig/ID.txt)
+id=$(cat config/ID.txt)
 #echo "usuario actual: $USER"
 sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$USER"/servidorR
 sleep 1
@@ -208,12 +208,12 @@ sleep 1
 echo "      ... Listo"
 
 # Creación de ID imprimible
-touch ~/.respConfig/ID.svg
-cat encabezado_ID.txt > ~/.respConfig/ID.svg
-echo "${id}" >> ~/.respConfig/ID.svg
-cat final_ID.txt >> ~/.respConfig/ID.svg
+touch config/ID.svg
+cat encabezado_ID.txt > config/ID.svg
+echo "${id}" >> config/ID.svg
+cat final_ID.txt >> config/ID.svg
 #mogrify -format png -- ID.svg
-cairosvg -f pdf -o ~/.respConfig/ID.pdf ~/.respConfig/ID.svg
+cairosvg -f pdf -o config/ID.pdf config/ID.svg
 
 bash banner.sh
 echo "      ID imprimible creada"
@@ -222,7 +222,7 @@ printf "%1s\n" "${RED}            Imprima el documento que aparecerá en pantall
 printf "%1s\n" "${RED}            Esa es la ID que permitirá restaurar el Sistema. ${NORMAL}"
 printf "%1s\n" "${YELLOW}            Presione ENTER para continuar. ${NORMAL}"
 read ok
-xdg-open ~/.respConfig/ID.pdf
+xdg-open config/ID.pdf
 
 bash banner.sh
 printf "%1s\n" "${YELLOW}            Creando subrutina de respaldo${NORMAL}"
