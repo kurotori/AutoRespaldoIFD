@@ -2,12 +2,16 @@
 clear
 
 # shellcheck source=red.sh
-source ./red.sh
+#source ./red.sh
+source ./funciones.sh
+
+#echo "$ruta_local"
 
 ### Variables Auxiliares
 #version=$(cat version.txt)
 error=0
 interf_red=""
+usuario="$USER"
 
 
 #### Funciones Auxiliares ####
@@ -46,21 +50,25 @@ do
     sleep 1
 done
 
-    #echo "  Cambiando permisos de ImageMagick..."
-
-    #sudo sed -i 's/<!-- <policy domain="coder" rights="none" pattern="PDF" --> \/>/<policy domain="coder" rights="none" pattern="PDF" \/>/' /etc/ImageMagick-6/policy.xml
-    #echo "  Listo"
-    #sleep 2
 bash banner.sh
 printf "%1s\n" "${LIME_YELLOW}            Configurando el sistema ${NORMAL}"
 printf "%1s\n" "${BRIGHT}------------------------------------------------${NORMAL}"
 echo ""
 echo "  1 - Creando carpetas auxiliares"
 
+echo "  Carpeta $ruta_local/config..."
 if [ ! -d config ]
 then
 	mkdir config
 fi
+echo "...Listo"
+
+echo "  Carpeta $ruta_local/datos..."
+if [ ! -d datos ]
+then
+	mkdir datos
+fi
+echo "...Listo"
 
 sleep 1
 echo "      ... Listo"
@@ -161,13 +169,13 @@ echo ""
 echo "      Escaneando la red en busca del servidor."
 buscar_h "$rango" "$mac_disp" & PID=$! #simulate a long process
 echo "      Por favor espere..."
-printf "      ["
+printf "      "
 # While process is running...
 while kill -0 $PID 2> /dev/null; do 
     printf  "▓"
     sleep 1
 done
-printf "]"
+printf ""
 
 echo "    ...Escaneo Completo"
 #Código de animación de espera tomado del usuario cosbor11 de stackoverflow.com
@@ -182,17 +190,17 @@ printf "%1s\n" "      IP del servidor:  ${BRIGHT}${ip_servidor}${NORMAL}"
 echo ""
 echo "      Accediendo a la carpeta de respaldos del servidor..."
 
-if [ ! -d /media/"$USER"/servidorR ]
+if [ ! -d /media/"$usuario"/servidorR ]
 then
-	sudo mkdir /media/"$USER"/servidorR> /dev/null
+	sudo mkdir /media/"$usuario"/servidorR> /dev/null
 fi
-sudo chown "$USER" /media/"$USER"/servidorR
+sudo chown "$usuario" /media/"$usuario"/servidorR
 
 #echo "fin de crear carpeta de montaje"
 
 id=$(cat config/ID.txt)
 #echo "usuario actual: $USER"
-sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$USER"/servidorR
+sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$usuario"/servidorR
 sleep 1
 echo "      ... Listo"
 
@@ -208,39 +216,23 @@ sleep 1
 echo "      ... Listo"
 
 # Creación de ID imprimible
-touch config/ID.svg
-cat encabezado_ID.txt > config/ID.svg
-echo "${id}" >> config/ID.svg
-cat final_ID.txt >> config/ID.svg
+touch "$ruta_local/config/ID.svg"
+cat encabezado_ID.txt > "$ruta_local/config/ID.svg"
+echo "${id}" >> "$ruta_local/config/ID.svg"
+cat final_ID.txt >> "$ruta_local/config/ID.svg"
 #mogrify -format png -- ID.svg
-cairosvg -f pdf -o config/ID.pdf config/ID.svg
+cairosvg -f pdf -o "$ruta_local/config/ID.pdf" "$ruta_local/config/ID.svg"
 
 bash banner.sh
 echo "      ID imprimible creada"
 printf "%1s\n" "${RED}            ATENCION:${NORMAL}"
-printf "%1s\n" "${RED}            Imprima el documento que aparecerá en pantalla. ${NORMAL}"
+printf "%1s\n" "${RED}            IMPRIMA el documento que aparecerá en pantalla. ${NORMAL}"
 printf "%1s\n" "${RED}            Esa es la ID que permitirá restaurar el Sistema. ${NORMAL}"
 printf "%1s\n" "${YELLOW}            Presione ENTER para continuar. ${NORMAL}"
 read ok
-xdg-open config/ID.pdf
+xdg-open "$ruta_local/config/ID.pdf"
 
 bash banner.sh
 printf "%1s\n" "${YELLOW}            Creando subrutina de respaldo${NORMAL}"
-crontab -l > 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+echo "00 23 * * 5 $ruta_local/autorespaldo.sh" > cronrespaldo
+crontab cronrespaldo

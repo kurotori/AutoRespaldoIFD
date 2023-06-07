@@ -1,5 +1,5 @@
 #!/bin/bash
-ruta_local=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+#ruta_local=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 source "$ruta_local/funciones.sh"
 source "$ruta_local/red.sh"
