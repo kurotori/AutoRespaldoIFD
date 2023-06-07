@@ -25,7 +25,8 @@ if [ ${#ip_server} -gt 6 ]; then
     notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "$mensajeTit" "$mensCuerpo"
 
 #2 - Montar la carpeta de respaldos
-    mount -t cifs //"${ip_servidor}"/respaldos /home/"$USER"/servidorR
+    #mount -t cifs //"${ip_server}"/respaldos /home/"$USER"/servidorR
+    
     sleep 1
 
 #3 - Iniciar el respaldo

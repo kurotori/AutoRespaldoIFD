@@ -12,6 +12,7 @@ source ./funciones.sh
 error=0
 interf_red=""
 usuario="$USER"
+id_usuario="$UID"
 
 
 #### Funciones Auxiliares ####
@@ -190,17 +191,20 @@ printf "%1s\n" "      IP del servidor:  ${BRIGHT}${ip_servidor}${NORMAL}"
 echo ""
 echo "      Accediendo a la carpeta de respaldos del servidor..."
 
-if [ ! -d /media/"$usuario"/servidorR ]
-then
-	sudo mkdir /media/"$usuario"/servidorR> /dev/null
-fi
-sudo chown "$usuario" /media/"$usuario"/servidorR
+# if [ ! -d /media/"$usuario"/servidorR ]
+# then
+# 	sudo mkdir /media/"$usuario"/servidorR> /dev/null
+# fi
+# sudo chown "$usuario" /media/"$usuario"/servidorR
 
 #echo "fin de crear carpeta de montaje"
 
 id=$(cat config/ID.txt)
 #echo "usuario actual: $USER"
-sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$usuario"/servidorR
+#sudo mount -t cifs //"${ip_servidor}"/respaldos /media/"$usuario"/servidorR
+dirRespaldo="smb://${ip_servidor}/respaldos"
+
+gio mount -a "$dirRespaldo"    #smb://"${ip_servidor}"/respaldos
 sleep 1
 echo "      ... Listo"
 
@@ -208,9 +212,12 @@ echo ""
 echo "      Registrando PC en el servidor..."
 # --> Revisar este artículo: https://askubuntu.com/questions/1021643/how-to-specify-a-password-when-mounting-a-smb-share-with-gio
 
-sudo mkdir /media/"$USER"/servidorR/"${id}"
+gio mkdir "$dirRespaldo"/"${id}"
+
+#sudo mkdir /media/"$USER"/servidorR/"${id}"
 # Desmontado de unidad remota
-sudo umount //"${ip_servidor}"/respaldos
+gio mount -u "$dirRespaldo"
+#sudo umount //"${ip_servidor}"/respaldos
 
 sleep 1
 echo "      ... Listo"
@@ -236,3 +243,47 @@ bash banner.sh
 printf "%1s\n" "${YELLOW}            Creando subrutina de respaldo${NORMAL}"
 echo "00 23 * * 5 $ruta_local/autorespaldo.sh" > cronrespaldo
 crontab cronrespaldo
+
+
+# Configuración de archivos no incluídos
+excluidos="*.exe\n*.mp*\n*.iso\n*.aac\n*.avi"
+opcion=100
+
+while [ "$opcion" -eq 100 ]; do
+
+    bash banner.sh
+    printf "%1s\n" "${BRIGHT}            Tipos de archivos exluidos del respaldo:${NORMAL}"
+    echo "      "
+    
+    echo -e "${excluidos}"
+    printf "%1s\n" "${BRIGHT}            ¿Desea modificar la lista? ${NORMAL}"
+    printf "%1s\n" "${BRIGHT}            1 - Añadir un tipo a la lista ${NORMAL}"
+    printf "%1s\n" "${BRIGHT}            2 - Quitar todos los tipos de la lista ${NORMAL}"
+    printf "%1s\n" "${BRIGHT}            3 - Guardar la lista ${NORMAL}"
+    
+    read -r opcion
+    case "${opcion}" in
+        1)
+            printf "%1s\n" "${BRIGHT}            Tipo de archivo a excluir (solo la extensión, sin puntos ni símbolos): ${NORMAL}"
+            read -r tipo
+            excluidos="$excluidos\n*.$tipo"
+            opcion=100
+        ;;
+        2)
+            excluidos=""
+            opcion=100
+        ;;
+        3)
+            echo -e "${excluidos}"
+        ;;
+        *)
+            echo "OPCIÓN NO VÁLIDA"
+        ;;
+    esac
+    
+done
+
+
+
+
+read ok

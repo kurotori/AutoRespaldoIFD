@@ -48,7 +48,7 @@ buscar_h()
 
     if [ $ip_h2 -eq 1 ]
     then
-        ip_h=$(grep "$2" "$ruta_local/config/lista_ips.txt"|awk '{print $1}'|sed 's/[()]//g')
+        ip_h=$(grep -i "$2" "$ruta_local/config/lista_ips.txt"|awk '{print $1}'|sed 's/[()]//g')
     fi
 
 	echo "$ip_h">"$ruta_local/config/ip_servidor.txt"
