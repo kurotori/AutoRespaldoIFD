@@ -266,8 +266,16 @@ while [ "$opcion" -eq 100 ]; do
         1)
             printf "%1s\n" "${BRIGHT}            Tipo de archivo a excluir (solo la extensión, sin puntos ni símbolos): ${NORMAL}"
             read -r tipo
-            excluidos="$excluidos\n*.$tipo"
+            if [ $(echo "$tipo"|grep -c -e "[\*\.]") -gt 0 ]
+            then
+                echo "Valor no válido. Intente nuevamente"
+            else
+                excluidos="$excluidos\n*.$tipo"
+                echo "Se agregó el tipo *.${tipo} a la lista de archivos excluidos"
+            fi
+            espere
             opcion=100
+            
         ;;
         2)
             excluidos=""

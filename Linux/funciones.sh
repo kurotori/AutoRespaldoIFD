@@ -24,7 +24,14 @@ registro()
 
 }
 
-#registro "PRUEBAS" "Esto es una prueba"
+#Genera una pausa en la ejecución, esperando a que el usuario presione ENTER
+espere()
+{
+    echo 'Presione ENTER para continuar'
+    read ok
+}
+
+
 
 # Funciones de Red
 
@@ -82,3 +89,5 @@ listar_interfaces()
         echo "$i - ${interfaces[$i]}"
     done
 }
+
+#
