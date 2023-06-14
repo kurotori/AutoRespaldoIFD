@@ -6,6 +6,7 @@ clear
 source ./funciones.sh
 
 #echo "$ruta_local"
+#read ok
 
 ### Variables Auxiliares
 #version=$(cat version.txt)
@@ -231,10 +232,11 @@ cat final_ID.txt >> "$ruta_local/config/ID.svg"
 cairosvg -f pdf -o "$ruta_local/config/ID.pdf" "$ruta_local/config/ID.svg"
 
 bash banner.sh
+printf "%1s\n" "      ID:  ${BRIGHT}${id}${NORMAL}"
 echo "      ID imprimible creada"
-printf "%1s\n" "${RED}            ATENCION:${NORMAL}"
-printf "%1s\n" "${RED}            IMPRIMA el documento que aparecerá en pantalla. ${NORMAL}"
-printf "%1s\n" "${RED}            Esa es la ID que permitirá restaurar el Sistema. ${NORMAL}"
+printf "%1s\n" "${LIME_YELLOW}            ATENCION:${NORMAL}"
+printf "%1s\n" "${LIME_YELLOW}            IMPRIMA el documento que aparecerá en pantalla. ${NORMAL}"
+printf "%1s\n" "${LIME_YELLOW}            Esa es la ID que permitirá restaurar el Sistema. ${NORMAL}"
 printf "%1s\n" "${YELLOW}            Presione ENTER para continuar. ${NORMAL}"
 read ok
 xdg-open "$ruta_local/config/ID.pdf"
@@ -246,7 +248,7 @@ crontab cronrespaldo
 
 
 # Configuración de archivos no incluídos
-excluidos="*.exe\n*.mp*\n*.iso\n*.aac\n*.avi"
+excluidos="*.exe\n*.mp*\n*.iso\n*.aac\n*.avi\n*.mkv"
 opcion=100
 
 while [ "$opcion" -eq 100 ]; do
@@ -275,14 +277,13 @@ while [ "$opcion" -eq 100 ]; do
             fi
             espere
             opcion=100
-            
         ;;
         2)
             excluidos=""
             opcion=100
         ;;
         3)
-            echo -e "${excluidos}"
+            echo -e "${excluidos}" > "$ruta_local/config/excluidos.txt"
         ;;
         *)
             echo "OPCIÓN NO VÁLIDA"
@@ -291,7 +292,9 @@ while [ "$opcion" -eq 100 ]; do
     
 done
 
-
-
-
+#Finalizar la configuración y realizar el primer respaldo
+banner
+printf "%1s\n" "${BRIGHT}            La configuración del sistema se completó con éxito${NORMAL}"
+echo "      "
+printf "%1s\n" "${YELLOW}            Presione ENTER para salir. ${NORMAL}"
 read ok

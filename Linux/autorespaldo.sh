@@ -1,8 +1,9 @@
 #!/bin/bash
 #ruta_local=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-source "$ruta_local/funciones.sh"
+source "./funciones.sh"
 source "$ruta_local/red.sh"
+
 
 # Permite redirigir las notificaciones hacia el monitor principal
 export DISPLAY=':0.0'
@@ -43,4 +44,3 @@ fi
 
 
 
-os
