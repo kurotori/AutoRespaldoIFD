@@ -30,14 +30,20 @@ if [ ${#ip_servidor} -gt 6 ]; then
     notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "$mensajeTit" "$mensCuerpo"
 
 #2 - Montar la carpeta de respaldos
-   
+    idPC=$(cat config/ID.txt)
     dirRespaldo="smb://${ip_servidor}/respaldos"
     gio mount -a "$dirRespaldo"
-    
+    #gio mkdir "$dirRespaldo"/"${idPC}"
+    dirRespaldo=$(gio info "$dirRespaldo"|grep -e "local path"|cut -d":" -f2,3)
+
     sleep 1
 
 #3 - Iniciar el respaldo
+    touch "$dirRespaldo/$idPC/respaldo_$fecha.txt"
+    rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "$dirRespaldo"/"$idPC"/"respaldo_$fecha.txt"
+    #rsync -azvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "$dirRespaldo"/"$idPC"/"respaldo_$fecha.txt"
 #4 - Generar informe
+
 #5 - Desmontar carpeta de respaldos
 
 else

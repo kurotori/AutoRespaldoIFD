@@ -1,6 +1,43 @@
 #!/bin/bash
 
+### Variables Auxiliares
 ruta_local=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+fecha=$(date +%d-%m-%Y)
+hora=$(date +%H-%M)
+version=$(cat version.txt)
+fecha=$(date +%d-%m-%Y)
+hora=$(date +%H-%M)
+
+#Colores del texto
+#---Formatos del texto
+BLACK=$(tput setaf 0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+LIME_YELLOW=$(tput setaf 190)
+POWDER_BLUE=$(tput setaf 153)
+BLUE=$(tput setaf 4)
+MAGENTA=$(tput setaf 5)
+CYAN=$(tput setaf 6)
+WHITE=$(tput setaf 7)
+BRIGHT=$(tput bold)
+NORMAL=$(tput sgr0)	
+BLINK=$(tput blink)
+REVERSE=$(tput smso)
+UNDERLINE=$(tput smul)
+
+#Muestra el encabezado de la interfáz de usuario
+banner()
+{	
+	
+	titulo="Respaldo Remoto Automático"
+	
+	clear
+	printf "%1s\n" "${BRIGHT}----------------------------------------------${NORMAL}"
+	printf "%1s\n" "${LIME_YELLOW}        ${titulo} ${version}${NORMAL}"
+	printf "%1s\n" "${BRIGHT}-- $fecha ----------------------- $hora --${NORMAL}"
+	echo ""
+}
 
 #Genera una entrada con marca de tiempo en un archivo de registro
 #Parámetros: 1 - Tipo de registro, 2 - Dato del registro
