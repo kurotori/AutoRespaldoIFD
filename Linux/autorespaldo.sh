@@ -15,18 +15,24 @@ mensajeTit="Sistema de Respaldo Automático"
 
 interfaz=$(cat "$ruta_local/config/interfaz.txt")
 rango=$(rango_red "$interfaz")
-notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "Sistema de Respaldo Automático" "Buscando al servidor de respaldos en el rango $rango con la interfaz $interfaz"
-mapeo "$rango"
-mac_server=$(cat "$ruta_local/config/dispositivo.txt")
-ip_server=$(buscar_h "$rango" "$mac_server")
 
-if [ ${#ip_server} -gt 6 ]; then
+notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "Sistema de Respaldo Automático" "Buscando al servidor de respaldos en el rango $rango con la interfaz $interfaz"
+
+mapeo "$rango"
+
+mac_servidor=$(cat "$ruta_local/config/dispositivo.txt")
+ip_servidor=$(buscar_h "$rango" "$mac_servidor")
+
+
+if [ ${#ip_servidor} -gt 6 ]; then
     
-    mensCuerpo="Servidor de respaldos ubicado en la IP:$ip_server"
+    mensCuerpo="Servidor de respaldos ubicado en la IP:$ip_servidor"
     notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "$mensajeTit" "$mensCuerpo"
 
 #2 - Montar la carpeta de respaldos
-    #mount -t cifs //"${ip_server}"/respaldos /home/"$USER"/servidorR
+   
+    dirRespaldo="smb://${ip_servidor}/respaldos"
+    gio mount -a "$dirRespaldo"
     
     sleep 1
 

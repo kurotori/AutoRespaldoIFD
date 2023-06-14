@@ -38,6 +38,14 @@ UNDERLINE=$(tput smul)
 
 
 #----
+opciones=100
+#TODO: Completar el bucle principal para permitir selección de opciones
+# y permitir la recuperación de un sistema previo.
+while [ "$opciones" -eq 100 ]; do
+    
+done
+
+
 paquetes=("nmap" "cifs-utils" "rsync" "cairosvg")
 for i in "${!paquetes[@]}"
 do
@@ -274,6 +282,7 @@ while [ "$opcion" -eq 100 ]; do
             else
                 excluidos="$excluidos\n*.$tipo"
                 echo "Se agregó el tipo *.${tipo} a la lista de archivos excluidos"
+                espere
             fi
             espere
             opcion=100
@@ -284,17 +293,19 @@ while [ "$opcion" -eq 100 ]; do
         ;;
         3)
             echo -e "${excluidos}" > "$ruta_local/config/excluidos.txt"
+            echo "            Archivos excluidos configurados"
+            espere
         ;;
         *)
             echo "OPCIÓN NO VÁLIDA"
+            espere
         ;;
     esac
     
 done
 
 #Finalizar la configuración y realizar el primer respaldo
-banner
+bash banner.sh
 printf "%1s\n" "${BRIGHT}            La configuración del sistema se completó con éxito${NORMAL}"
 echo "      "
-printf "%1s\n" "${YELLOW}            Presione ENTER para salir. ${NORMAL}"
-read ok
+espere
