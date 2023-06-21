@@ -173,7 +173,7 @@ while [ "$opciones" -eq 100 ]; do
             echo ""
 
             read -r mac_disp
-            echo "$mac_disp" > config/dispositivo.txt
+            echo "$mac_disp" > config/macServidor.txt
             echo ""
 
             printf "%1s\n" "      Ubicando al servidor  ${BRIGHT}${mac_disp}${NORMAL} en la red..."
@@ -287,7 +287,10 @@ while [ "$opciones" -eq 100 ]; do
                         echo -e "${excluidos}" > "$ruta_local/config/excluidos.txt"
                         #Se agrega esta línea al archivo de excluidos para evitar que se respalde la carpeta de cache del usuario
                         echo ".cache/" >> "$ruta_local/config/excluidos.txt"
+
                         echo "            Archivos excluidos configurados"
+
+                        #Respaldo de la configuración de archivos excluidos en el servidor de respaldo
                         gio copy "$ruta_local"/config/excluidos.txt "$dirRespaldo"/"${id}"/config/excluidos.txt
                         espere
                     ;;
@@ -302,7 +305,7 @@ while [ "$opciones" -eq 100 ]; do
             #Finalizar la configuración y realizar el primer respaldo
             # Desmontado de unidad remota
             gio mount -u "$dirRespaldo"
-            
+            bash "$ruta_local"/autorespaldo.sh
 
             banner
             printf "%1s\n" "${BRIGHT}            La configuración del sistema se completó con éxito${NORMAL}"

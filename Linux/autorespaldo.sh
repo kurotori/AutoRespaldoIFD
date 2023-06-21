@@ -20,7 +20,7 @@ notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "Sistema de Respaldo Au
 
 mapeo "$rango"
 
-mac_servidor=$(cat "$ruta_local/config/dispositivo.txt")
+mac_servidor=$(cat "$ruta_local/config/macServidor.txt")
 ip_servidor=$(buscar_h "$rango" "$mac_servidor")
 
 
@@ -33,14 +33,23 @@ if [ ${#ip_servidor} -gt 6 ]; then
     idPC=$(cat config/ID.txt)
     dirRespaldo="smb://${ip_servidor}/respaldos"
     gio mount -a "$dirRespaldo"
-    #gio mkdir "$dirRespaldo"/"${idPC}"
     dirRespaldo=$(gio info "$dirRespaldo"|grep -e "local path"|cut -d":" -f2,3)
+
+    linkRespaldo="$ruta_local/respaldos"
+
+    if [ ! -L "$linkRespaldo" ]; then
+        unlink "$linkRespaldo"
+    fi
+
+    ln -s "$dirRespaldo/" "$linkRespaldo"
+    echo "link creado"
+    espere
 
     sleep 1
 
 #3 - Iniciar el respaldo
-    touch "$dirRespaldo/$idPC/respaldo_$fecha.txt"
-    rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "$dirRespaldo"/"$idPC"/"respaldo_$fecha.txt"
+    touch "${dirRespaldo}/${idPC}/respaldo_${fecha}.txt"
+    rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "${dirRespaldo}/${idPC}/respaldo_${fecha}.txt"
     #rsync -azvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "$dirRespaldo"/"$idPC"/"respaldo_$fecha.txt"
 #4 - Generar informe
 
