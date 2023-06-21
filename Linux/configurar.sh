@@ -216,11 +216,9 @@ while [ "$opciones" -eq 100 ]; do
             # --> Revisar este artículo: https://askubuntu.com/questions/1021643/how-to-specify-a-password-when-mounting-a-smb-share-with-gio
 
             gio mkdir "$dirRespaldo"/"${id}"
+            gio mkdir "$dirRespaldo"/"${id}"/config
+            gio mkdir "$dirRespaldo"/"${id}"/datos
 
-            #sudo mkdir /media/"$USER"/servidorR/"${id}"
-            # Desmontado de unidad remota
-            gio mount -u "$dirRespaldo"
-            #sudo umount //"${ip_servidor}"/respaldos
 
             sleep 1
             echo "      ... Listo"
@@ -239,7 +237,7 @@ while [ "$opciones" -eq 100 ]; do
             printf "%1s\n" "${LIME_YELLOW}            ATENCION:${NORMAL}"
             printf "%1s\n" "${LIME_YELLOW}            IMPRIMA el documento que aparecerá en pantalla. ${NORMAL}"
             printf "%1s\n" "${LIME_YELLOW}            Esa es la ID que permitirá restaurar el Sistema. ${NORMAL}"
-            esperar
+            espere
             xdg-open "$ruta_local/config/ID.pdf"
 
             banner
@@ -287,8 +285,10 @@ while [ "$opciones" -eq 100 ]; do
                     3)
                         
                         echo -e "${excluidos}" > "$ruta_local/config/excluidos.txt"
+                        #Se agrega esta línea al archivo de excluidos para evitar que se respalde la carpeta de cache del usuario
                         echo ".cache/" >> "$ruta_local/config/excluidos.txt"
                         echo "            Archivos excluidos configurados"
+                        gio copy "$ruta_local"/config/excluidos.txt "$dirRespaldo"/"${id}"/config/excluidos.txt
                         espere
                     ;;
                     *)
@@ -300,6 +300,10 @@ while [ "$opciones" -eq 100 ]; do
             done
 
             #Finalizar la configuración y realizar el primer respaldo
+            # Desmontado de unidad remota
+            gio mount -u "$dirRespaldo"
+            
+
             banner
             printf "%1s\n" "${BRIGHT}            La configuración del sistema se completó con éxito${NORMAL}"
             echo "      "
@@ -307,6 +311,9 @@ while [ "$opciones" -eq 100 ]; do
         ;;
         2)
             
+        ;;
+        3)
+            opciones=1
         ;;
         *)
             echo "Opción No Válida"
