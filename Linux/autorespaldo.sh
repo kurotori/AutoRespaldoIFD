@@ -21,6 +21,10 @@ notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "Sistema de Respaldo Au
 mapeo "$rango"
 
 mac_servidor=$(cat "$ruta_local/config/macServidor.txt")
+
+#buscar_h "$rango" "$mac_servidor"
+
+#espere
 ip_servidor=$(buscar_h "$rango" "$mac_servidor")
 
 
@@ -39,21 +43,24 @@ if [ ${#ip_servidor} -gt 6 ]; then
 
     if [ ! -L "$linkRespaldo" ]; then
         unlink "$linkRespaldo"
+        ln -s "$dirRespaldo/" "$linkRespaldo"
+        echo "link creado"
     fi
 
     ln -s "$dirRespaldo/" "$linkRespaldo"
-    echo "link creado"
-    espere
 
     sleep 1
 
 #3 - Iniciar el respaldo
-    touch "${dirRespaldo}/${idPC}/respaldo_${fecha}.txt"
-    rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "${dirRespaldo}/${idPC}/respaldo_${fecha}.txt"
+    touch "${linkRespaldo}/${idPC}/respaldo_${fecha}.txt"
+    registro "ACTIVIDAD" "Respaldo iniciado en $ip_servidor con la ID: $idPC."
+    rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "${linkRespaldo}/${idPC}/respaldo_${fecha}.txt"
     #rsync -azvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "$dirRespaldo"/"$idPC"/"respaldo_$fecha.txt"
 #4 - Generar informe
-
-#5 - Desmontar carpeta de respaldos
+    registro "ACTIVIDAD" "Respaldo finalizado."
+#5 - Desmontar carpeta de respaldos y deshacer vínculo simbólico
+    gio mount -u "$dirRespaldo"
+    unlink "$linkRespaldo"
 
 else
 #ERROR 1.1 - No se puede ubicar al servidor de respaldos 

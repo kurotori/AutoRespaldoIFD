@@ -1,0 +1,6 @@
+[2023-06-26 15:51:22] - ERROR: No se pudo encontrar al servidor de respaldos.
+[2023-06-26 15:53:37] - ERROR: No se pudo encontrar al servidor de respaldos.
+[2023-06-26 15:57:03] - ERROR: No se pudo encontrar al servidor de respaldos.
+[2023-06-26 16:04:12] - ERROR: No se pudo encontrar al servidor de respaldos.
+[2023-06-26 16:08:24] - ERROR: No se pudo encontrar al servidor de respaldos.
+[2023-06-26 16:09:45] - ERROR: No se pudo encontrar al servidor de respaldos.
