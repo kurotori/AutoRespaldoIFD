@@ -2,6 +2,7 @@ Linux/aux/
 Linux/config/
 Linux/datos/
 Linux/cronrespaldo
+Linux/registros
 Windows/nmap/
 Windows/referencias/
 *.svg

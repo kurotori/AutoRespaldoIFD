@@ -77,6 +77,8 @@ espere()
 #Parámetro 1: rango de red
 mapeo()
 {
+    #echo "$1"
+    #ip_l=$(nmap -sP "$1" >/dev/null && ip neigh)
     ip_l=$(nmap -sP "$1" >/dev/null && ip neigh)
     #ip_l=$(nmap -sP "$1" >/dev/null && arp -an)
     echo "$ip_l">"$ruta_local/config/lista_ips.txt"
@@ -86,6 +88,13 @@ mapeo()
 #Parámetro 1: rango de red, Parámetro 2: MAC del servidor
 buscar_h()
 {   
+
+    if [[ -f "$ruta_local/config/ip_servidor.txt" ]]; then
+        ip_servidor=$(cat "$ruta_local/config/ip_servidor.txt")
+    else
+        ip_servidor=""
+    fi
+    
     #Tiempo actual del sistema
     t_actual=$(date +%s)
 
@@ -96,30 +105,33 @@ buscar_h()
     fi
 
     if [ -s "$ruta_local/aux/tiempo_reg.txt" ]
+
     then
         t_reg=$(cat "$ruta_local/aux/tiempo_reg.txt")
     else
         t_reg=0
     fi
-
+    
     #Chequeo del último escaneo
-    ult_reg=$(expr $t_actual - $t_reg)
-
-    if [[ $ult_reg -ge 86400 ]]; then
+    ult_reg=$(( t_actual - t_reg))
+    
+    if [[ $ult_reg -ge 86400 ]] || [[ ${#ip_servidor} -lt 6 ]]; then
         
         mapeo "$1"
         ip_h2=$(grep -c "$2" "$ruta_local/config/lista_ips.txt")
         #echo "cant $ip_h2"
 
-        if [ $ip_h2 -eq 1 ]
+        if [ "$ip_h2" -eq 1 ]
         then
             ip_h=$(grep -i "$2" "$ruta_local/config/lista_ips.txt"|awk '{print $1}'|sed 's/[()]//g')
         fi
-
-        echo "$ip_h">"$ruta_local/config/ip_servidor.txt"
-        date +%s>$ruta_local/aux/tiempo_reg.txt
-        echo "$ip_h"
+    else
+        ip_h="${ip_servidor}"
     fi
+
+    echo "$ip_h">"$ruta_local/config/ip_servidor.txt"
+    date +%s>"$ruta_local/aux/tiempo_reg.txt"
+    echo "$ip_h"
 
 }
 

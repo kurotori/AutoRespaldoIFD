@@ -1,41 +1,15 @@
 #!/bin/bash
-algo=0
 
-while [ "${algo}" -ne 100 ]; do
-    clear
-    echo 'Ingrese un número'
+source "./funciones.sh"
+echo "algo"
+buscar_h "172.16.2.0/24" "00:25:22:db:0d:d2"
+coso=$(gio mount -l|grep -c -e "smb://172.16.2.128/respaldos")
 
-    read -r algo
-
-    algo=$((algo-1))
-
-    lista=("coso" "cosa" "cose")
-    num=${#lista[@]}
-
-
-    case  1:${algo:--} in
-    (1:*[!0-9]*|1:0*[89]*)
-    ! echo "${algo} no es un valor válido"; algo=0
-    ;;
-    ($((algo<=num))*)
-        item=${lista[$algo]}
-        echo "Seleccionó $item"
-        
-    ;;
-    ($((algo>num))*)
-        echo "${algo} no es un valor válido"
-    ;;
-    *)
-       echo "${algo} no es un valor válido"
-       algo=0
-    ;;
-    esac
-sleep 2
-done
-
-
-
-
+if [ $coso -gt 0 ]; then
+    echo "hay"
+else
+    
+fi
 
 
 

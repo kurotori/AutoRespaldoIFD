@@ -1,5 +1,6 @@
 #!/bin/bash
 #ruta_local=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+# shellcheck source=./funciones.sh
 
 source "./funciones.sh"
 source "$ruta_local/red.sh"
@@ -18,15 +19,16 @@ rango=$(rango_red "$interfaz")
 
 notify-send -t 3000 -i "$ruta_local/img/red_Freepik.png" "Sistema de Respaldo Automático" "Buscando al servidor de respaldos en el rango $rango con la interfaz $interfaz"
 
-mapeo "$rango"
+#mapeo "$rango"
 
 mac_servidor=$(cat "$ruta_local/config/macServidor.txt")
-
+#echo "$mac_servidor"
 #buscar_h "$rango" "$mac_servidor"
 
 #espere
 ip_servidor=$(buscar_h "$rango" "$mac_servidor")
 
+echo "IP: $ip_servidor"
 
 if [ ${#ip_servidor} -gt 6 ]; then
     
@@ -36,18 +38,26 @@ if [ ${#ip_servidor} -gt 6 ]; then
 #2 - Montar la carpeta de respaldos
     idPC=$(cat config/ID.txt)
     dirRespaldo="smb://${ip_servidor}/respaldos"
-    gio mount -a "$dirRespaldo"
+    
+    #Chequeo del punto de montaje
+    p_montaje=$(gio mount -l|grep -c -e "smb://${ip_servidor}/respaldos")
+    if [ "$p_montaje" -lt 0 ]; then
+        gio mount -a "$dirRespaldo"      
+    fi
+    
     dirRespaldo=$(gio info "$dirRespaldo"|grep -e "local path"|cut -d":" -f2,3)
-
+    
     linkRespaldo="$ruta_local/respaldos"
 
-    if [ ! -L "$linkRespaldo" ]; then
+    if [ -L "$linkRespaldo" ]; then
         unlink "$linkRespaldo"
+        ln -s "$dirRespaldo" "$linkRespaldo"
+        echo "link re-creado"
+    else
         ln -s "$dirRespaldo/" "$linkRespaldo"
         echo "link creado"
     fi
-
-    ln -s "$dirRespaldo/" "$linkRespaldo"
+  
 
     sleep 1
 
@@ -60,7 +70,8 @@ if [ ${#ip_servidor} -gt 6 ]; then
     registro "ACTIVIDAD" "Respaldo finalizado."
 #5 - Desmontar carpeta de respaldos y deshacer vínculo simbólico
     gio mount -u "$dirRespaldo"
-    unlink "$linkRespaldo"
+    #unlink "$linkRespaldo"
+    echo "quitar link"
 
 else
 #ERROR 1.1 - No se puede ubicar al servidor de respaldos 
