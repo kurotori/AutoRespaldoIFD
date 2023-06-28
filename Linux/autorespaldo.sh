@@ -37,15 +37,16 @@ if [ ${#ip_servidor} -gt 6 ]; then
 
 #2 - Montar la carpeta de respaldos
     idPC=$(cat config/ID.txt)
-    dirRespaldo="smb://${ip_servidor}/respaldos"
+    srvRespaldo="smb://${ip_servidor}/respaldos"
     
     #Chequeo del punto de montaje
     p_montaje=$(gio mount -l|grep -c -e "smb://${ip_servidor}/respaldos")
-    if [ "$p_montaje" -lt 0 ]; then
-        gio mount -a "$dirRespaldo"      
+    echo "$p_montaje"
+    if [ "$p_montaje" -lt 1 ]; then
+        gio mount -a $srvRespaldo
     fi
-    
-    dirRespaldo=$(gio info "$dirRespaldo"|grep -e "local path"|cut -d":" -f2,3)
+
+    dirRespaldo=$(gio info "$srvRespaldo"|grep -e "local path"|cut -d":" -f2,3)
     
     linkRespaldo="$ruta_local/respaldos"
 
@@ -54,24 +55,24 @@ if [ ${#ip_servidor} -gt 6 ]; then
         ln -sF $dirRespaldo/ $linkRespaldo
         echo "link re-creado"
     else
-        ln -sF "$dirRespaldo/" "$linkRespaldo"
+        ln -sF $dirRespaldo/ $linkRespaldo
         echo "link creado"
     fi
-  
 
     sleep 1
 
 #3 - Iniciar el respaldo
     touch "${linkRespaldo}/${idPC}/respaldo_${fecha}.txt"
     registro "ACTIVIDAD" "Respaldo iniciado en $ip_servidor con la ID: $idPC."
-    rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "${linkRespaldo}/${idPC}/respaldo_${fecha}.txt"
-    #rsync -azvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "$dirRespaldo"/"$idPC"/"respaldo_$fecha.txt"
+    #rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "${linkRespaldo}/${idPC}/respaldo_${fecha}.txt"
+    rsync -azvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$linkRespaldo/$idPC" >> "${linkRespaldo}/${idPC}/respaldo_${fecha}.txt"
 #4 - Generar informe
     registro "ACTIVIDAD" "Respaldo finalizado."
 #5 - Desmontar carpeta de respaldos y deshacer vínculo simbólico
-    gio mount -u "$dirRespaldo"
+    gio mount -u "$srvRespaldo"
     unlink "$linkRespaldo"
     echo "quitar link"
+#6 - 
 
 else
 #ERROR 1.1 - No se puede ubicar al servidor de respaldos 
