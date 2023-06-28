@@ -51,10 +51,10 @@ if [ ${#ip_servidor} -gt 6 ]; then
 
     if [ -L "$linkRespaldo" ]; then
         unlink "$linkRespaldo"
-        ln -s "$dirRespaldo" "$linkRespaldo"
+        ln -sF $dirRespaldo/ $linkRespaldo
         echo "link re-creado"
     else
-        ln -s "$dirRespaldo/" "$linkRespaldo"
+        ln -sF "$dirRespaldo/" "$linkRespaldo"
         echo "link creado"
     fi
   
@@ -70,7 +70,7 @@ if [ ${#ip_servidor} -gt 6 ]; then
     registro "ACTIVIDAD" "Respaldo finalizado."
 #5 - Desmontar carpeta de respaldos y deshacer vínculo simbólico
     gio mount -u "$dirRespaldo"
-    #unlink "$linkRespaldo"
+    unlink "$linkRespaldo"
     echo "quitar link"
 
 else
