@@ -218,6 +218,7 @@ while [ "$opciones" -eq 100 ]; do
             gio mkdir "$dirRespaldo"/"${id}"
             gio mkdir "$dirRespaldo"/"${id}"/config
             gio mkdir "$dirRespaldo"/"${id}"/datos
+            gio mkdir "$dirRespaldo"/"${id}"/registro
 
 
             sleep 1

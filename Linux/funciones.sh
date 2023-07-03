@@ -40,7 +40,7 @@ banner()
 }
 
 #Genera una entrada con marca de tiempo en un archivo de registro
-#Parámetros: 1 - Tipo de registro, 2 - Dato del registro
+#Parámetros: 1 - Tipo de registro, 2 - Dato del registro, 3 - Ruta
 registro()
 {
     printf -v anio '%(%Y)T' -1
@@ -50,13 +50,13 @@ registro()
     printf -v minuto '%(%M)T' -1
     printf -v segundo '%(%S)T' -1
 
-    if [ ! -d ./registros ]
-    then
-        mkdir ./registros
-    fi
-
-    touch ./registros/"$1_$anio-$mes-$dia.txt"
-    echo "[$anio-$mes-$dia $hora:$minuto:$segundo] - $1: $2" >> ./registros/"$1_$anio-$mes-$dia.txt"
+    # if [ ! -d ./registros ]
+    # then
+    #     mkdir ./registros
+    # fi
+    archivo="$3/$1_$anio-$mes-$dia.txt"
+    touch "$archivo"
+    echo "[$anio-$mes-$dia $hora:$minuto:$segundo] - $1: $2" >> "$archivo"
     echo "[$anio-$mes-$dia $hora:$minuto:$segundo] - $1: $2"
 
 }

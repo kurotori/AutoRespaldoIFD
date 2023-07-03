@@ -1,21 +1,8 @@
 #!/bin/bash
 
 source "./funciones.sh"
-echo "algo"
-buscar_h "172.16.2.0/24" "00:25:22:db:0d:d2"
-coso=$(gio mount -l|grep -c -e "smb://172.16.2.128/respaldos")
 
-if [ $coso -gt 0 ]; then
-    echo "hay"
-else
-    
-fi
-
-
-
-
-
-
+registro "ERROR" "No se pudo encontrar al servidor de respaldos." "$ruta_local/registros"
 
 # source ./red.sh
 
