@@ -67,7 +67,7 @@ if [ ${#ip_servidor} -gt 6 ]; then
     touch "$archReg"
     registro "ACTIVIDAD" "Respaldo iniciado en $ip_servidor con la ID: $idPC." "$rutaReg" 
     #rsync -aznvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$dirRespaldo"/"$idPC" >> "${linkRespaldo}/${idPC}/respaldo_${fecha}.txt"
-    rsync -azvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$linkRespaldo/$idPC" >> "$archReg"
+    rsync -azvP --exclude-from="$ruta_local/config/excluidos.txt" --max-size=200m "$HOME"/ "$linkRespaldo/$idPC/respaldos" >> "$archReg"
 #4 - Generar informe
     cp "$archReg" "$ruta_local/registros/"
     registro "ACTIVIDAD" "Respaldo finalizado." "$rutaReg"
